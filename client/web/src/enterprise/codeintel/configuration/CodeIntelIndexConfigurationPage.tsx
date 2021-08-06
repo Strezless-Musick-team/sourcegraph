@@ -33,8 +33,8 @@ export const CodeIntelIndexConfigurationPage: FunctionComponent<CodeIntelIndexCo
 }) => {
     useEffect(() => telemetryService.logViewEvent('CodeIntelIndexConfigurationPage'), [telemetryService])
 
-    const [saveError, setSaveError] = useState<Error>()
     const [fetchError, setFetchError] = useState<Error>()
+    const [saveError, setSaveError] = useState<Error>()
     const [configuration, setConfiguration] = useState('')
     const [inferredConfiguration, setInferredConfiguration] = useState('')
     const [state, setState] = useState(() => CodeIntelIndexEditorState.Idle)
