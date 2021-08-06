@@ -36,6 +36,8 @@ export const CodeIntelIndexConfigurationPage: FunctionComponent<CodeIntelIndexCo
     const [configuration, setConfiguration] = useState('')
     const [inferredConfiguration, setInferredConfiguration] = useState('')
     const [fetchError, setFetchError] = useState<Error>()
+    const [state, setState] = useState(() => CodeIntelIndexEditorState.Idle)
+    const [saveError, setSaveError] = useState<Error>()
 
     useEffect(() => {
         const subscription = getConfiguration({ id: repo.id }).subscribe(configuration => {
@@ -45,9 +47,6 @@ export const CodeIntelIndexConfigurationPage: FunctionComponent<CodeIntelIndexCo
 
         return () => subscription.unsubscribe()
     }, [repo, getConfiguration])
-
-    const [state, setState] = useState(() => CodeIntelIndexEditorState.Idle)
-    const [saveError, setSaveError] = useState<Error>()
 
     const save = useCallback(
         async (content: string) => {
@@ -69,6 +68,8 @@ export const CodeIntelIndexConfigurationPage: FunctionComponent<CodeIntelIndexCo
         (config: string) => ({ edits: [{ offset: 0, length: config.length, content: inferredConfiguration }] }),
         [inferredConfiguration]
     )
+
+    const saving = state === CodeIntelIndexEditorState.Saving
 
     return fetchError ? (
         <ErrorAlert prefix="Error fetching index configuration" error={fetchError} />
@@ -103,7 +104,7 @@ export const CodeIntelIndexConfigurationPage: FunctionComponent<CodeIntelIndexCo
                     canEdit={true}
                     onChange={setConfiguration}
                     onSave={save}
-                    saving={state === CodeIntelIndexEditorState.Saving}
+                    saving={saving}
                     height={600}
                     isLightTheme={isLightTheme}
                     history={history}
