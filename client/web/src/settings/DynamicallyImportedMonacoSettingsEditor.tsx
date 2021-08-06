@@ -227,7 +227,6 @@ export class DynamicallyImportedMonacoSettingsEditor<T extends object = {}> exte
     private runAction(id: string, editor?: _monaco.editor.ICodeEditor): void {
         if (editor) {
             const action = editor.getAction(id)
-            console.log('wtf', { id, action })
             action.run().then(
                 () => undefined,
                 error => console.error(error)
