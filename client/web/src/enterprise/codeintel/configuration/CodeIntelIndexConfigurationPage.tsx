@@ -35,9 +35,9 @@ export const CodeIntelIndexConfigurationPage: FunctionComponent<CodeIntelIndexCo
 
     const [configuration, setConfiguration] = useState('')
     const [inferredConfiguration, setInferredConfiguration] = useState('')
+    const [saveError, setSaveError] = useState<Error>()
     const [fetchError, setFetchError] = useState<Error>()
     const [state, setState] = useState(() => CodeIntelIndexEditorState.Idle)
-    const [saveError, setSaveError] = useState<Error>()
 
     useEffect(() => {
         const subscription = getConfiguration({ id: repo.id }).subscribe(configuration => {
