@@ -213,6 +213,38 @@ func indexedSymbolsBranch(ctx context.Context, repository, commit string) string
 	return ""
 }
 
+func escape(s string) string {
+	isSpecial := func(c rune) bool {
+		switch c {
+		case '\\', '/':
+			return true
+		default:
+			return false
+		}
+	}
+
+	// Avoid extra work by counting additions. regexp.QuoteMeta does the same,
+	// but is more efficient since it does it via bytes.
+	count := 0
+	for _, c := range s {
+		if isSpecial(c) {
+			count++
+		}
+	}
+	if count == 0 {
+		return s
+	}
+
+	escaped := make([]rune, 0, len(s)+count)
+	for _, c := range s {
+		if isSpecial(c) {
+			escaped = append(escaped, '\\')
+		}
+		escaped = append(escaped, c)
+	}
+	return string(escaped)
+}
+
 func searchZoekt(ctx context.Context, repoName types.RepoName, commitID api.CommitID, inputRev *string, branch string, queryString *string, first *int32, includePatterns *[]string) (res []*result.SymbolMatch, err error) {
 	raw := *queryString
 	if raw == "" {
@@ -295,6 +327,7 @@ func searchZoekt(ctx context.Context, repoName types.RepoName, commitID api.Comm
 						Path:       file.FileName,
 						Line:       l.LineNumber,
 						Language:   file.Language,
+						Pattern:    fmt.Sprintf("/^%s$/", escape(string(l.Line))),
 					},
 					File: newFile,
 				})
